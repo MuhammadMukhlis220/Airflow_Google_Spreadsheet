@@ -1,7 +1,7 @@
 ---
 # **Integrating Fill Google Spreadsheet Automatic using Google's API with Airflow**
 
-In this repository, we will discuss how to integrate Apache Airflow with Google Spreadsheet. Here, we will find an example of a DAG (Directed Acyclic Graph) script that can be used to perform **write** commands directly to a Google Spreadsheet worksheet.
+In this repository, we will learn how to integrate Apache Airflow with Google Spreadsheet. Here, we will find an example of a DAG (Directed Acyclic Graph) script that can be used to perform **write** commands directly to a Google Spreadsheet worksheet.
 
 ## Step 1 Configure Google Cloud Console
 

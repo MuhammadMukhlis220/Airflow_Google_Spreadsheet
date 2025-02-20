@@ -219,4 +219,4 @@ The results from the executed DAG:
 Figure 21
 
 ---
-**This tutorial has been created, happy experimenting!**
+**Thats all, happy experimenting!**

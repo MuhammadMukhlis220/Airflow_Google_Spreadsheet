@@ -122,7 +122,7 @@ Result:
 
 Figure 18
 
-## Step 3 Buat DAG Airflow
+## Step 3 Create Airflow DAG
 
 After successfully testing using the code editor, we will now implement it in Apache Airflow.
 

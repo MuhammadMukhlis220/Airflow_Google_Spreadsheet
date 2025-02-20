@@ -200,4 +200,26 @@ t1 >> t2 >> t3
    ```
    </details>
 
+Di sini kita membuat simulasi pencatatan waktu setelah seluruh task selesai dijalankan pada cell A5 dan B5.
+Kita mengambil waktu saat ini menggunakan `datetime.now()` dari library `datetime`.
 
+![Alt Text](/pic/result_1.png)
+
+Gambar 19
+
+Mari jalankan DAG nya
+
+![Alt Text](/pic/result_2.png)
+
+Gambar 20
+
+## Step 4 Cek Hasil
+
+Hasil dari DAG yang dijalankan:
+
+![Alt Text](/pic/code_5.png)
+
+Gambar 20
+
+---
+**Demikian tutorial ini dibuat, selamat mencoba**

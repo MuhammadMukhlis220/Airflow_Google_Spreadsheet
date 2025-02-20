@@ -1,132 +1,130 @@
 ---
 # **Integrating Fill Google Spreadsheet Automatic using Google's API with Airflow**
 
-Di repository ini kita akan membahas bagaimana mengintegrasikan Apache Airflow dengan Google Spreadsheet. Di sini kita akan menemukan contoh skrip DAG (Directed Acyclic Graph) yang dapat digunakan untuk melakukan perintah **write** langsung ke worksheet milik Google Spreadsheet.
+In this repository, we will discuss how to integrate Apache Airflow with Google Spreadsheet. Here, we will find an example of a DAG (Directed Acyclic Graph) script that can be used to perform **write** commands directly to a Google Spreadsheet worksheet.
 
-## Step 1 Konfigurasi Google Cloud Console
+## Step 1 Configure Google Cloud Console
 
-Akses url https://console.cloud.google.com/ dengan login akun gmail kemudian pilih `Select Project`.
+Access the URL [https://console.cloud.google.com/](https://console.cloud.google.com/) and log in with your Gmail account. Then, select `Select Project`.
 
 ![Alt Text](/pic/google_console_1.png)
-Gambar 1
+Figure 1
 
-Isi `Project Name` dan `Project ID`. `Project ID` akan diisi otomatis oleh sistem.
+Enter the `Project Name` and `Project ID`. The `Project ID` will be automatically filled by the system.
 
 ![Alt Text](/pic/google_console_2.png)
 
-Gambar 2
+Figure 2
 
-Di menu sebelah kiri pilih `APIs & Services` dan pilih `Library`
+On the left menu, select `APIs & Services` and then choose `Library`.
 
 ![Alt Text](/pic/google_console_3.png)
 
-Gambar 3
+Figure 3
 
-Cari dan pilih Google Spreadsheet API
+Search for and select the Google Sheets API.
 
 ![Alt Text](/pic/google_console_4.png)
 
-Gambar 4
+Figure 4
 
-Klik `ENABLE`
+Click `ENABLE`
 
 ![Alt Text](/pic/google_console_5.png)
 
-Gambar 5
+Figure 5
 
-Create Credential dengan memilih API milik `Google Sheets API` dan pilih tipe `Application data`
+Click on `Create Credential`, select the API for `Google Sheets API`, and choose the type `Application data`.
 
 ![Alt Text](/pic/google_console_6.png)
 
-Gambar 6
+Figure 6
 
-Pada bagian `Service account details`, isi seluruh form yang kosong kemudian `CREATE AND CONTINUE`
+In the `Service account details` section, fill out all the empty fields and then click `CREATE AND CONTINUE`.
 
 ![Alt Text](/pic/google_console_7.png)
 
-Gambar 7
+Figure 7
 
-Pada bagian `Grant this service account access to project`, isi bagian `Role` dengan **Owner** kemudian `CONTINUE`
+In the `Grant this service account access to project` section, fill in the `Role` field with **Owner** and then click `CONTINUE`.
 
 ![Alt Text](/pic/google_console_8.png)
 
-Gambar 8
+Figure 8
 
-Kembali ke menu sebelah kiri, pilih bagian `IAM and Admin` dan ke `Service Accounts`. DI bagian email, pilih akun yang baru saja kita buat.
+Return to the left-hand menu, select `IAM and Admin`, and then go to `Service Accounts`. In the email section, select the account that we just created.
 
 ![Alt Text](/pic/google_console_9.png)
 
-Gambar 9
+Figure 9
 
-Di dalam akun yang dipilih, pergi ke tab `KEYS` dan pilih `Create new key` 
+In the selected account, go to the `KEYS` tab and select `Create new key`.
 
 ![Alt Text](/pic/google_console_10.png)
 
-Gambar 10
+Figure 10
 
-Kemudian pilih `JSON` dan `CREATE`
+Then select `JSON` and then `CREATE`
 
 ![Alt Text](/pic/google_console_11.png)
 
-Gambar 11
+Figure 11
 
-FIle JSON akan otomatis ter-download oleh browser
+The JSON file will be automatically downloaded by the browser.
 
 ![Alt Text](/pic/google_console_12.png)
 
-Gambar 12
+Figure 12
 
-Buat Spreadsheet baru (Di sini saya menamakannya dengan `Testing Spreadsheet API`) dan `Share` dokumen tersebut dengan mengisi email yang baru kita buat di Google Cloud Console serta beri role **Editor**
+Create a new Spreadsheet (I named it `Testing Spreadsheet API`) and `Share` the document by entering the email you just created in the Google Cloud Console, granting it the **Editor** role.
 
 ![Alt Text](/pic/google_console_13.png)
 
-Gambar 13
+Figure 13
 
-Jika kesulitan menemukan email yang dibuat, buka file JSON yang diunduh tadi dan cek di bagian **client_email**
+If you're having trouble finding the email that was created, open the JSON file that was downloaded earlier and check under the **client_email** section.
 
 ![Alt Text](/pic/code_1.png)
 
-Gambar 14
+Figure 14
 
-# Step 2 Test Menggunakan Code Editor (Python)
+# Step 2: Testing Using a Code Editor (Python)
 
-Di sini saya menggunakan Jupyter Notebook pada VS Code.
-Library yang dibutuhkan adalah gspread dan oauth2client.service_account
+In this step, I am using Jupyter Notebook in VS Code. 
+The required libraries are `gspread` and `oauth2client.service_account`.
 
 ![Alt Text](/pic/code_3.png)
 
-Gambar 15
+Figure 15
 
-Masukan variabel scope dengan `["https://www.googleapis.com/auth/spreadsheets"]`
-Variabel creds dengan path ke file JSON yang diunduh
+Add the `scope` variable with the value `["https://www.googleapis.com/auth/spreadsheets"]`. 
+Set the `creds` variable to the path of the downloaded JSON file.
 
-Pada bagian spreadsheet_id, kita bisa cek pada url dokumen spreadsheet yang dituju seperti pada gambar 16
+In the `spreadsheet_id` section, we can check the URL of the target spreadsheet document as shown in Figure 16.
 
 ![Alt Text](/pic/code_2.png)
 
-Gambar 16
+Figure 16
 
-Dari code gambar 15, kita akan meminta nama (title) dari Spreadsheet yang kita tuju dan nama sheet-nya
+From the code in Figure 15, we will request the name (title) of the target Spreadsheet and its sheet name.
 
-Setelah berhasil, kita akan melanjutkan untuk memberi perintah write ke cell A5 dan A6 dengan dua metode.
-Metode pertama dengan mengirim API satu per satu dan metode kedua dengan mengirim API menggunakan Batch.
-API yang kita buat ini dilimit oleh Google sebanyak 30 kali penulisan dalah sehari sehingga akan lebih bijak dengan menggunakan metode Batch
+Once successful, we will proceed to send write commands to cells A5 and A6 using two methods. The first method involves sending individual API calls one by one, while the second method uses Batch API calls. This API we created is limited by Google to 30 write operations per day, so it would be wiser to use the Batch method.
 
-Kotak merah yang atas adalah cara untuk mengirim API satu per satu. Kota merah yang bawah adalah cara mengirim API menggunakan Batch.
+The upper red box shows how to send API calls one by one, while the lower red box demonstrates how to send API calls using the Batch method.
 
 ![Alt Text](/pic/code_4.png)
 
-Gambar 17
+Figure 17
 
 Result:
 
 ![Alt Text](/pic/result_3.png)
 
-Gambar 18
+Figure 18
 
 ## Step 3 Buat DAG Airflow
 
-Setelah berhasil testing menggunakan code editor, sekarang kita akan implementasikan ke Apache Airflow
+After successfully testing using the code editor, we will now implement it in Apache Airflow.
 
 For the complete Python programming code, refer to the following block.
 <details>
@@ -200,26 +198,25 @@ t1 >> t2 >> t3
    ```
    </details>
 
-Di sini kita membuat simulasi pencatatan waktu setelah seluruh task selesai dijalankan pada cell A5 dan B5.
-Kita mengambil waktu saat ini menggunakan `datetime.now()` dari library `datetime`.
+In this section, we simulate time logging after all tasks have been completed in cells A5 and B5. We capture the current time using `datetime.now()` from the `datetime` library.
 
 ![Alt Text](/pic/result_1.png)
 
-Gambar 19
+Figure 19
 
-Mari jalankan DAG nya
+Let’s run the DAG.
 
 ![Alt Text](/pic/result_2.png)
 
-Gambar 20
+Figure 20
 
-## Step 4 Cek Hasil
+## Step 4 Check the Results
 
-Hasil dari DAG yang dijalankan:
+The results from the executed DAG:
 
 ![Alt Text](/pic/code_5.png)
 
-Gambar 20
+Figure 21
 
 ---
-**Demikian tutorial ini dibuat, selamat mencoba**
+**This tutorial has been created, happy experimenting!**
